@@ -10,13 +10,25 @@ from linebot.v3.webhooks import (
 	FollowEvent, MessageEvent, PostbackEvent, TextMessageContent
 )
 import os
-
 from dotenv import load_dotenv
+from news import fetch_news
+from lm import make_quiz
+
+
 load_dotenv()
 
 ## 環境変数を変数に割り当て
 CHANNEL_ACCESS_TOKEN = os.environ["LINE_ACCESS_TOKEN"]
 CHANNEL_SECRET = os.environ["LINE_CHANNEL_SECRET"]
+OPEN_AI_API_KEY = os.environ["OPEN_AI_API_KEY"]
+NEWS_API_KEY = os.environ["NEWS_API_KEY"]
+
+## ニュースの情報やクイズを格納する変数
+title = ""
+url = ""
+quiz = ""
+answers_and_explanations = ""
+
 
 ## Flask アプリのインスタンス化
 app = Flask(__name__)
@@ -58,27 +70,39 @@ def handle_follow(event):
 		messages=[TextMessage(text='Thank You!')]
 	))
 
+
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-	## APIインスタンス化
-	with ApiClient(configuration) as api_client:
-		line_bot_api = MessagingApi(api_client)
+    reply = []
+    
+	# APIインスタンス化
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
 
-	## 受信メッセージの中身を取得
-	received_message = event.message.text
-
-	## APIを呼んで送信者のプロフィール取得
-	profile = line_bot_api.get_profile(event.source.user_id)
-	display_name = profile.display_name
-
-	## 返信メッセージ編集
-	reply = f'{display_name}さんのメッセージ\n{received_message}'
+	# 受信メッセージの中身を取得
+    received_message = event.message.text
+    
+    if received_message == "news" or "n":
+        news_dict = fetch_news(NEWS_API_KEY)
+        title = news_dict["title"]
+        url = news_dict["url"]
+        text = news_dict["text"]
+        reply.append(title)
+        reply.append(url)
+    elif received_message == "quiz" or "q":
+        q_and_a = make_quiz(text, OPEN_AI_API_KEY)
+        quiz = q_and_a["quiz"]
+        answers_and_explanations = q_and_a["answers_and_explanations"]
+        reply.append(quiz)
+    elif received_message == "answer" or "a":
+        reply.append(answers_and_explanations)
 
 	## オウム返し
-	line_bot_api.reply_message(ReplyMessageRequest(
-		replyToken=event.reply_token,
-		messages=[TextMessage(text=reply)]
-	))
+    for r in reply:
+        line_bot_api.reply_message(ReplyMessageRequest(
+            replyToken=event.reply_token,
+            messages=[TextMessage(text=r)]
+        ))
 
 ## 起動確認用ウェブサイトのトップページ
 @app.route('/', methods=['GET'])
