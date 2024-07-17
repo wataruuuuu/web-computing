@@ -81,15 +81,12 @@ def handle_message(event):
     #received_message = event.message.text
     
     news_dict = fetch_news(NEWS_API_KEY)
-    url = news_dict["url"]
     text = news_dict["text"]
-    reply0 = url
-    reply1 = url
+    reply0 = news_dict["url"]
+    reply1 = news_dict["title"]
     q_and_a = make_quiz(text, OPEN_AI_API_KEY)
-    quiz = q_and_a["quiz"]
-    answers_and_explanations = q_and_a["answers_and_explanations"]
-    reply2 = quiz
-    reply3 = answers_and_explanations
+    reply2 = q_and_a["quiz"]
+    reply3 = q_and_a["answers_and_explanations"]
 
     line_bot_api.reply_message(ReplyMessageRequest(
         replyToken=event.reply_token,
