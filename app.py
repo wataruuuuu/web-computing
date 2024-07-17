@@ -22,9 +22,10 @@ CHANNEL_SECRET = os.environ["LINE_CHANNEL_SECRET"]
 OPEN_AI_API_KEY = os.environ["OPEN_AI_API_KEY"]
 NEWS_API_KEY = os.environ["NEWS_API_KEY"]
 
-## ニュースの情報やクイズを格納する変数
+## ニュースの情報やクイズを格納するグローバル変数
 title = ""
 url = ""
+text = ""
 quiz = ""
 answers_and_explanations = ""
 
@@ -95,11 +96,18 @@ def handle_message(event):
 
     # 受信メッセージに応じて返信を分ける
     if received_message == 'n':
-        messages = [TextMessage(text=reply0), TextMessage(text=reply1)]
+        news_dict = fetch_news(NEWS_API_KEY)
+        title = news_dict["title"]
+        url = news_dict["url"]
+        text = news_dict["text"]
+        q_and_a = make_quiz(text, OPEN_AI_API_KEY)
+        quiz = q_and_a["quiz"]
+        answer = q_and_a["answers_and_explanations"]
+        messages = [TextMessage(text=title), TextMessage(text=url)]
     elif received_message == 'q':
-        messages = [TextMessage(text=reply2)]
+        messages = [TextMessage(text=quiz)]
     elif received_message == 'a':
-        messages = [TextMessage(text=reply3)]
+        messages = [TextMessage(text=answer)]
     else:
         messages = [TextMessage(text="Unknown command.")]
 
