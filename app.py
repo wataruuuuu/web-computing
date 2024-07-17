@@ -78,20 +78,36 @@ def handle_message(event):
         line_bot_api = MessagingApi(api_client)
 
 	# 受信メッセージの中身を取得
-    #received_message = event.message.text
+    received_message = event.message.text
     
-    news_dict = fetch_news(NEWS_API_KEY)
-    text = news_dict["text"]
-    reply0 = news_dict["url"]
-    reply1 = news_dict["title"]
-    q_and_a = make_quiz(text, OPEN_AI_API_KEY)
-    reply2 = q_and_a["quiz"]
-    reply3 = q_and_a["answers_and_explanations"]
+    #news_dict = fetch_news(NEWS_API_KEY)
+    #text = news_dict["text"]
+    #reply0 = news_dict["url"]
+    #reply1 = news_dict["title"]
+    #q_and_a = make_quiz(text, OPEN_AI_API_KEY)
+    #reply2 = q_and_a["quiz"]
+    #reply3 = q_and_a["answers_and_explanations"]
 
+    reply0 = "url"
+    reply1 = "title"
+    reply2 = "quiz"
+    reply3 = "answers_and_explanations"
+
+    # 受信メッセージに応じて返信を分ける
+    if received_message == 'n':
+        messages = [TextMessage(text=reply0), TextMessage(text=reply1)]
+    elif received_message == 'q':
+        messages = [TextMessage(text=reply2)]
+    elif received_message == 'a':
+        messages = [TextMessage(text=reply3)]
+    else:
+        messages = [TextMessage(text="Unknown command.")]
+
+    # 返信
     line_bot_api.reply_message(ReplyMessageRequest(
         replyToken=event.reply_token,
-        messages=[TextMessage(text=reply2)]
-    ))
+        messages=messages
+    ))    
 
 ## 起動確認用ウェブサイトのトップページ
 @app.route('/', methods=['GET'])
