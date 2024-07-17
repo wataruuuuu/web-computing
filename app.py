@@ -3,11 +3,10 @@ from linebot.v3 import WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.messaging import (
 	ApiClient, Configuration, MessagingApi,
-	ReplyMessageRequest, PushMessageRequest,
-	TextMessage, PostbackAction
+	ReplyMessageRequest, TextMessage
 )
 from linebot.v3.webhooks import (
-	FollowEvent, MessageEvent, PostbackEvent, TextMessageContent
+	FollowEvent, MessageEvent, TextMessageContent
 )
 import os
 from dotenv import load_dotenv
@@ -79,27 +78,22 @@ def handle_message(event):
         line_bot_api = MessagingApi(api_client)
 
 	# 受信メッセージの中身を取得
-    received_message = event.message.text
+    #received_message = event.message.text
     
-    if received_message == "news" or "n":
-        news_dict = fetch_news(NEWS_API_KEY)
-        title = news_dict["title"]
-        url = news_dict["url"]
-        text = news_dict["text"]
-        reply = url
-    elif received_message == "quiz" or "q":
-        q_and_a = make_quiz(text, OPEN_AI_API_KEY)
-        quiz = q_and_a["quiz"]
-        answers_and_explanations = q_and_a["answers_and_explanations"]
-        reply = quiz
-    elif received_message == "answer" or "a":
-        reply = answers_and_explanations
-    else:
-        reply = "I'm sorry, I don't know."
+    news_dict = fetch_news(NEWS_API_KEY)
+    url = news_dict["url"]
+    text = news_dict["text"]
+    reply0 = url
+    reply1 = url
+    q_and_a = make_quiz(text, OPEN_AI_API_KEY)
+    quiz = q_and_a["quiz"]
+    answers_and_explanations = q_and_a["answers_and_explanations"]
+    reply2 = quiz
+    reply3 = answers_and_explanations
 
     line_bot_api.reply_message(ReplyMessageRequest(
         replyToken=event.reply_token,
-        messages=[TextMessage(text=reply)]
+        messages=[TextMessage(text=reply0), TextMessage(text=reply1), TextMessage(text=reply2), TextMessage(text=reply3)]
     ))
 
 ## 起動確認用ウェブサイトのトップページ

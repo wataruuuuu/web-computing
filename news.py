@@ -25,6 +25,7 @@ def fetch_news(api_key):
     # テキストデータから本文データの切り出し
     start_index = text.find(begining)
     title_index = text.find(title)
+    
     if start_index != -1:
         extracted_text = text[start_index:].rstrip()
     elif title_index != -1:
