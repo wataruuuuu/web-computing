@@ -90,7 +90,7 @@ def handle_message(event):
 
     line_bot_api.reply_message(ReplyMessageRequest(
         replyToken=event.reply_token,
-        messages=[TextMessage(text=reply0), TextMessage(text=reply1), TextMessage(text=reply2), TextMessage(text=reply3)]
+        messages=[TextMessage(text=reply2)]
     ))
 
 ## 起動確認用ウェブサイトのトップページ
