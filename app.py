@@ -73,7 +73,6 @@ def handle_follow(event):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    reply = []
     
 	# APIインスタンス化
     with ApiClient(configuration) as api_client:
@@ -87,22 +86,21 @@ def handle_message(event):
         title = news_dict["title"]
         url = news_dict["url"]
         text = news_dict["text"]
-        reply.append(title)
-        reply.append(url)
+        reply = url
     elif received_message == "quiz" or "q":
         q_and_a = make_quiz(text, OPEN_AI_API_KEY)
         quiz = q_and_a["quiz"]
         answers_and_explanations = q_and_a["answers_and_explanations"]
-        reply.append(quiz)
+        reply = quiz
     elif received_message == "answer" or "a":
-        reply.append(answers_and_explanations)
+        reply = answers_and_explanations
+    else:
+        reply = "I'm sorry, I don't know."
 
-	## オウム返し
-    for r in reply:
-        line_bot_api.reply_message(ReplyMessageRequest(
-            replyToken=event.reply_token,
-            messages=[TextMessage(text=r)]
-        ))
+    line_bot_api.reply_message(ReplyMessageRequest(
+        replyToken=event.reply_token,
+        messages=[TextMessage(text=reply)]
+    ))
 
 ## 起動確認用ウェブサイトのトップページ
 @app.route('/', methods=['GET'])
