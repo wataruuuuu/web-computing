@@ -81,21 +81,8 @@ def handle_message(event):
 	# 受信メッセージの中身を取得
     received_message = event.message.text
     
-    #news_dict = fetch_news(NEWS_API_KEY)
-    #text = news_dict["text"]
-    #reply0 = news_dict["url"]
-    #reply1 = news_dict["title"]
-    #q_and_a = make_quiz(text, OPEN_AI_API_KEY)
-    #reply2 = q_and_a["quiz"]
-    #reply3 = q_and_a["answers_and_explanations"]
-
-    reply0 = "url"
-    reply1 = "title"
-    reply2 = "quiz"
-    reply3 = "answers_and_explanations"
-
     # 受信メッセージに応じて返信を分ける
-    if received_message == 'n':
+    if received_message == "n" or "news":
         news_dict = fetch_news(NEWS_API_KEY)
         title = news_dict["title"]
         url = news_dict["url"]
@@ -104,10 +91,6 @@ def handle_message(event):
         quiz = q_and_a["quiz"]
         answer = q_and_a["answers_and_explanations"]
         messages = [TextMessage(text=title), TextMessage(text=url), TextMessage(text=quiz), TextMessage(text=answer)]
-#    elif received_message == 'q':
-#        messages = [TextMessage(text=quiz)]
-#    elif received_message == 'a':
-#        messages = [TextMessage(text=answer)]
     else:
         messages = [TextMessage(text="Unknown command.")]
 
