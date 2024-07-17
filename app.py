@@ -103,11 +103,11 @@ def handle_message(event):
         q_and_a = make_quiz(text, OPEN_AI_API_KEY)
         quiz = q_and_a["quiz"]
         answer = q_and_a["answers_and_explanations"]
-        messages = [TextMessage(text=title), TextMessage(text=url)]
-    elif received_message == 'q':
-        messages = [TextMessage(text=quiz)]
-    elif received_message == 'a':
-        messages = [TextMessage(text=answer)]
+        messages = [TextMessage(text=title), TextMessage(text=url), TextMessage(text=quiz), TextMessage(text=answer)]
+#    elif received_message == 'q':
+#        messages = [TextMessage(text=quiz)]
+#    elif received_message == 'a':
+#        messages = [TextMessage(text=answer)]
     else:
         messages = [TextMessage(text="Unknown command.")]
 
