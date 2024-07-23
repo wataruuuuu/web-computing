@@ -2,3 +2,9 @@
 **/__pycache__  ## キャッシュファイルの除外
 .env  ## 環境変数ファイル
 venv  ## 仮想環境
+Test/
+__pycache__/
+data/
+.DS_Store
+README.txt
+test.py
