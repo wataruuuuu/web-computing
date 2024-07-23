@@ -11,7 +11,7 @@ from linebot.v3.webhooks import (
 import os
 from dotenv import load_dotenv
 from news import fetch_news
-from lm import make_quiz
+from lm import make_quiz, make_answer
 
 
 load_dotenv()
@@ -87,9 +87,8 @@ def handle_message(event):
         title = news_dict["title"]
         url = news_dict["url"]
         text = news_dict["text"]
-        q_and_a = make_quiz(text, OPEN_AI_API_KEY)
-        quiz = q_and_a["quiz"]
-        answer = q_and_a["answers_and_explanations"]
+        quiz = make_quiz(text, OPEN_AI_API_KEY)
+        answer = make_answer(text, quiz, OPEN_AI_API_KEY)
         messages = [TextMessage(text=title), TextMessage(text=url), TextMessage(text=quiz), TextMessage(text=answer)]
     else:
         messages = [TextMessage(text="Unknown command.")]

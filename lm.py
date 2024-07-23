@@ -3,7 +3,6 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-
 # クイズの生成
 def make_quiz(text, key):
     # OpenAI APIのキーを設定
@@ -47,8 +46,12 @@ def make_quiz(text, key):
     )
 
     # 生成された3択クイズ
-    quiz = response1.choices[0].message.content
+    return response1.choices[0].message.content
 
+def make_answer(text, quiz ,key):
+    # OpenAI APIのキーを設定
+    client = OpenAI(api_key=key)
+    
     # プロンプト2: 解答と解説を生成
     prompt2 = f"""
     # 命令
@@ -81,13 +84,7 @@ def make_quiz(text, key):
     )
 
     # 生成された解答と解説
-    answers_and_explanations = response2.choices[0].message.content
-
-    # 結果を辞書で返す
-    return {
-        "quiz": quiz,
-        "answers_and_explanations": answers_and_explanations
-    }
+    return response2.choices[0].message.content
     
     
 if __name__ == "__main__":
@@ -105,13 +102,19 @@ if __name__ == "__main__":
     
     
     # 生成されたクイズと解答・解説を取得
-    q_and_a = make_quiz(text, OPEN_AI_API_KEY)
+    quiz = make_quiz(text, OPEN_AI_API_KEY)
+    ans = make_answer(text, quiz, OPEN_AI_API_KEY)
+    
+    with open("/Users/wataru/Documents/WebComp/data/title.txt", 'w') as fo:
+        fo.write(title)
+        fo.write("\n")
+        fo.write(url)
     
     with open("/Users/wataru/Documents/WebComp/data/text.txt", 'w') as fo:
         fo.write(text)
         
     with open("/Users/wataru/Documents/WebComp/data/quiz.txt", 'w') as fo:
-        fo.write(q_and_a["quiz"])
+        fo.write(quiz)
         
     with open("/Users/wataru/Documents/WebComp/data/answers_and_explanations.txt", 'w') as fo:
-        fo.write(q_and_a["answers_and_explanations"])
+        fo.write(ans)

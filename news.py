@@ -4,10 +4,7 @@ from bs4 import BeautifulSoup
 import os
 from dotenv import load_dotenv
 
-
 def fetch_news(api_key):
-    
-    
     newsapi = NewsApiClient(api_key = api_key)
     top_headlines = newsapi.get_top_headlines(sources='abc-news')
 
@@ -26,6 +23,7 @@ def fetch_news(api_key):
     start_index = text.find(begining)
     title_index = text.find(title)
     
+    # 取得してきたテキストデータから本文の切り出し
     if start_index != -1:
         extracted_text = text[start_index:].rstrip()
     elif title_index != -1:
